@@ -1,3 +1,7 @@
+import path from 'node:path';
+import { writeFile } from 'node:fs/promises';
+import { execSync } from 'node:child_process';
+
 type Template = {
 	latex: string;
 	data: Record<string, any>;
@@ -60,4 +64,15 @@ const documentHydrated = hydrate(document, {
 	children: body,
 });
 
-console.log(documentHydrated);
+async function processOutput(document: string) {
+	const outputPath = `${path.resolve('tmp')}/texFile.tex`;
+	const outputDirname = path.dirname(outputPath);
+
+	await writeFile(outputPath, document);
+
+	execSync(
+		`pdflatex -synctex=1 -interaction=nonstopmode -output-format=pdf -output-directory=${outputDirname} ${outputPath}`
+	);
+}
+
+processOutput(documentHydrated);
