@@ -1,0 +1,9 @@
+version: '3'
+services:
+  app:
+    build: .
+    env_file: docker.env
+    image: terras/${project}-api:${app_version}
+    container_name: ${project}-api
+    hostname: ${project}-api
+    restart: always
